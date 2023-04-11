@@ -467,6 +467,11 @@ public class OnlineAccounts.ImapDialog : Hdy.Window {
     }
 
     private async void save_configuration () throws Error {
+        var timeout_id = GLib.Timeout.add (1000 * 60, () => {
+            cancellable.cancel ();
+            return GLib.Source.REMOVE;
+        });
+
         if (registry == null) {
             registry = yield new E.SourceRegistry (cancellable);
         }
@@ -790,6 +795,8 @@ public class OnlineAccounts.ImapDialog : Hdy.Window {
         yield registry.commit_source (account_source, cancellable);
         yield registry.commit_source (identity_source, cancellable);
         yield registry.commit_source (transport_source, cancellable);
+
+        GLib.Source.remove (timeout_id);
     }
 
 

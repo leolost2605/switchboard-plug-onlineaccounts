@@ -117,7 +117,12 @@ public class OnlineAccounts.ImapSavePage : Gtk.Grid {
     }
 
     public void show_error (Error error) {
-        error_alert_view.description = error.message;
-        stack.set_visible_child_name ("error");
+        if (error is GLib.IOError.CANCELLED) {
+            error_alert_view.description = (_("The connection timed out"));
+            stack.set_visible_child_name ("error");
+        } else {
+            error_alert_view.description = error.message;
+            stack.set_visible_child_name ("error");
+        }
     }
 }
